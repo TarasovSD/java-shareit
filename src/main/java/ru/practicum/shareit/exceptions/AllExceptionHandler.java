@@ -26,7 +26,7 @@ public class AllExceptionHandler extends RuntimeException {
     }
 
     @ExceptionHandler(value = ItemIsNullException.class)
-    public ResponseEntity<String> ItemIsNullException() {
+    public ResponseEntity<String> itemIsNullException() {
         return new ResponseEntity<>("Вещь не найдена", HttpStatus.NOT_FOUND);
     }
 
@@ -36,7 +36,7 @@ public class AllExceptionHandler extends RuntimeException {
     }
 
     @ExceptionHandler(value = ItemAvailableIsNullException.class)
-    public ResponseEntity<String> ItemAvailableIsNullException() {
+    public ResponseEntity<String> itemAvailableIsNullException() {
         return new ResponseEntity<>("Поле available = null", HttpStatus.BAD_REQUEST);
     }
 }
