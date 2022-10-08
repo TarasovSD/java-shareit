@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
@@ -23,10 +22,9 @@ public class UserController {
     }
 
     @PostMapping()
-    public Optional<UserDto> createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        Optional<UserDto> optionalUserDto = userService.createUser(userDto);
+    public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
         log.info("Пользователь создан. Кол-во пользователей:" + userService.getAllUsers().size());
-        return optionalUserDto;
+        return userService.createUser(userDto);
     }
 
     @GetMapping()
@@ -38,15 +36,12 @@ public class UserController {
     @GetMapping("/{id}")
     public Optional<UserDto> getUserById(@PathVariable Long id) {
         log.info("Выполнен запрос getUserById по ID: " + id);
-        Optional<UserDto> optionalUser = userService.getUserById(id);
-        optionalUser.orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        return optionalUser;
+        return userService.getUserById(id);
     }
 
     @PatchMapping("/{id}")
     public Optional<UserDto> updateUserById(@Validated(Create.class) @PathVariable Long id, @RequestBody UserDto userDto) {
         Optional<UserDto> optionalUserDto = userService.updateUser(userDto, id);
-        optionalUserDto.orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
         log.info("Пользователь с id {} обновлен", id);
         return optionalUserDto;
     }

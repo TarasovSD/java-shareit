@@ -25,19 +25,18 @@ public class ItemController {
     }
 
     @PostMapping()
-    public Optional<ItemDto> createItem(@RequestHeader("X-Sharer-User-Id") Long userID, @Validated({Create.class})
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userID, @Validated({Create.class})
     @RequestBody ItemDto itemDto) {
-        Optional<ItemDto> optionalItemDto = itemService.createItem(itemDto, userID);
+        ItemDto createdItemDto = itemService.createItem(itemDto, userID);
         log.info("Вещь создана");
-        return optionalItemDto;
+        return createdItemDto;
     }
 
     @PatchMapping("/{itemId}")
-    public Optional<ItemDto> updateItemById(@RequestHeader("X-Sharer-User-Id") Long userID, @Validated(Update.class) @PathVariable Long itemId, @RequestBody ItemDto itemDto) {
-        Optional<ItemDto> optionalItemDto = itemService.updateItem(itemDto, itemId, userID);
-        optionalItemDto.orElseThrow(() -> new ItemNotFoundException("Вещь не найден"));
+    public ItemDto updateItemById(@RequestHeader("X-Sharer-User-Id") Long userID, @Validated(Update.class) @PathVariable Long itemId, @RequestBody ItemDto itemDto) {
+        ItemDto itemDtoForUpdate = itemService.updateItem(itemDto, itemId, userID);
         log.info("Вещь с id {} обновлена", itemId);
-        return optionalItemDto;
+        return itemDtoForUpdate;
     }
 
     @GetMapping("/{itemId}")

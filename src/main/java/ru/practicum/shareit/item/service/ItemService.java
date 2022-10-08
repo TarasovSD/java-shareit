@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemService {
-    Optional<ItemDto> createItem(ItemDto itemDto, Long userID);
+    ItemDto createItem(ItemDto itemDto, Long userID);
 
-    Optional<ItemDto> updateItem(ItemDto itemDto, Long itemId, Long userID);
+    ItemDto updateItem(ItemDto itemDto, Long itemId, Long userID);
 
     Optional<ItemDto> getItemById(Long itemId);
 

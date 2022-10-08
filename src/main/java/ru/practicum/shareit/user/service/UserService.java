@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<UserDto> createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
     List<UserDto> getAllUsers();
 
