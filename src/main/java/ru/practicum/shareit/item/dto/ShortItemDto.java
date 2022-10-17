@@ -10,12 +10,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ItemDto {
+public class ShortItemDto {
     private Long id;
     @NotBlank(groups = {Create.class})
     private String name;
     @NotBlank(groups = {Create.class})
     private String description;
     private Boolean available;
-    private String request;
 }
