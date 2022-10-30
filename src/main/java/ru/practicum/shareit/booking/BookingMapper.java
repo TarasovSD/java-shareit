@@ -7,12 +7,12 @@ import ru.practicum.shareit.user.model.User;
 
 public class BookingMapper {
 
-    public static Booking toBooking(ItemInfoDto.BookingDto bookingDto, Item item, User Booker) {
+    public static Booking toBooking(ItemInfoDto.BookingDto bookingDto, Item item, User booker) {
         return new Booking(bookingDto.getId(),
                 bookingDto.getStart(),
                 bookingDto.getEnd(),
                 item,
-                Booker,
+                booker,
                 bookingDto.getStatus());
     }
 
