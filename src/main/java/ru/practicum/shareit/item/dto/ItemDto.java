@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @AllArgsConstructor
+@RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class ItemDto {
@@ -17,5 +18,5 @@ public class ItemDto {
     @NotBlank(groups = {Create.class})
     private String description;
     private Boolean available;
-    private String request;
+    private Long request;
 }

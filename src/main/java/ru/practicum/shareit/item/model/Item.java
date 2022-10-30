@@ -1,8 +1,8 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Getter
@@ -11,13 +11,20 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Entity
+@Table(name = "items")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @NotBlank
     private String name;
     @NotBlank
     private String description;
     private Boolean available;
-    private User owner;
-    private String request;
+    @Column(name = "owner_id")
+    private Long ownerId;
+    @Column(name = "request_id")
+    private Long request;
 }
