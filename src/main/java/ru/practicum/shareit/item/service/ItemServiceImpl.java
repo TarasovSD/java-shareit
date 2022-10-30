@@ -99,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
             if (nextBookings.size() != 0) {
                 nextBooking = nextBookings.get(0);
             }
-            if (item.getOwnerId() == userId) {
+            if ((long) item.getOwnerId() == userId) {
                 return Optional.of(ItemMapper.toItemInfoDto(item, lastBooking, nextBooking, foundCommentDto));
             } else {
                 return Optional.of(ItemMapper.toItemInfoDto(item, null, null, foundCommentDto));

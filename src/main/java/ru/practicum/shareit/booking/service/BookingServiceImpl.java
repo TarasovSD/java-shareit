@@ -47,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingDto.getEnd().isBefore(bookingDto.getStart())) {
             throw new EndBeforeStartException("Значение поля End не может быть раньше значения поля Start");
         }
-        if (item.getOwnerId() == bookerID) {
+        if ((long) item.getOwnerId() == bookerID) {
             throw new BookerIsItemOwnerException("Попытка забронировать вещь владельцем");
         }
         Booking booking = BookingMapper.toBooking(bookingDto, item);
@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getStatus().equals(Status.APPROVED)) {
             throw new BookingAlreadyApprovedException("Бронирование уже подтверждено");
         }
-        if (booking.getItem().getOwnerId() != userID) {
+        if ((long) booking.getItem().getOwnerId() != userID) {
             throw new UserNotFoundException("Пользователь не найден");
         }
         if (approved) {
@@ -80,7 +80,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Optional<BookingWithItemNameDto> getBookingById(Long bookingId, Long userId) {
         Booking foundBooking = bookingRepository.findById(bookingId).get();
-        if (foundBooking.getBooker().getId() == userId || foundBooking.getItem().getOwnerId() == userId) {
+        if ((long) foundBooking.getBooker().getId() == userId || (long) foundBooking.getItem().getOwnerId() == userId) {
             return Optional.of(BookingMapper.toBookingDtoWithItemName(foundBooking, foundBooking.getItem().getName()));
         } else {
             throw new BookingNotFoundException("Бронирование не найдено");
