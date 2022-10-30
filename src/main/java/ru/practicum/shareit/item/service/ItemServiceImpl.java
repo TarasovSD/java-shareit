@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.CommentMapper;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.*;
@@ -87,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
             List<Booking> lastBookings = bookingRepository.getLastByItemId(item.getId(), nowMoment);
             List<Booking> nextBookings = bookingRepository.getNextByItemId(item.getId(), nowMoment);
             List<Comment> foundComments = commentRepository.findAll();
-            List<CommentDto> foundCommentDto = new ArrayList<>();
+            List<ItemInfoDto.CommentDto> foundCommentDto = new ArrayList<>();
             for (Comment comment : foundComments) {
                 foundCommentDto.add(CommentMapper.toCommentDto(comment));
             }
@@ -119,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
             List<Booking> lastBookings = bookingRepository.getLastByItemId(item.getId(), nowMoment);
             List<Booking> nextBookings = bookingRepository.getNextByItemId(item.getId(), nowMoment);
             List<Comment> foundComments = commentRepository.findAll();
-            List<CommentDto> foundCommentDto = new ArrayList<>();
+            List<ItemInfoDto.CommentDto> foundCommentDto = new ArrayList<>();
             for (Comment comment : foundComments) {
                 foundCommentDto.add(CommentMapper.toCommentDto(comment));
             }
@@ -160,7 +159,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public CommentDto createComment(CommentDto commentDto, Long userID, Long itemId) {
+    public ItemInfoDto.CommentDto createComment(ItemInfoDto.CommentDto commentDto, Long userID, Long itemId) {
         LocalDateTime created = LocalDateTime.now();
         User author = userRepository.findById(userID).get();
         Item itemForComment = itemRepository.findById(itemId).get();

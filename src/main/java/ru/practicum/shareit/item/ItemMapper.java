@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.dto.ShortItemDto;
@@ -37,7 +36,7 @@ public class ItemMapper {
     }
 
     public static ItemInfoDto toItemInfoDto(Item item, Booking lastBooking, Booking nextBooking,
-                                            List<CommentDto> listOfComments) {
+                                            List<ItemInfoDto.CommentDto> listOfComments) {
         ItemInfoDto.ItemBookingDto lastBookingDto = null;
         ItemInfoDto.ItemBookingDto nextBookingDto = null;
         if (lastBooking != null) {

@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
@@ -62,9 +61,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userID,
-                                    @RequestBody CommentDto commentDto, @PathVariable Long itemId) {
-        CommentDto createdCommentDto = itemService.createComment(commentDto, userID, itemId);
+    public ItemInfoDto.CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userID,
+                                                @RequestBody ItemInfoDto.CommentDto commentDto, @PathVariable Long itemId) {
+        ItemInfoDto.CommentDto createdCommentDto = itemService.createComment(commentDto, userID, itemId);
         log.info("Комментарий создан");
         return createdCommentDto;
     }

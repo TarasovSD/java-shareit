@@ -4,12 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingWithItemNameDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
+import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -39,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingWithItemNameDto createBooking(BookingDto bookingDto, Long bookerID) {
+    public ItemInfoDto.BookingWithItemNameDto createBooking(ItemInfoDto.BookingDto bookingDto, Long bookerID) {
         Item item = itemRepository.findById(bookingDto.getItemId()).get();
         if (!item.getAvailable()) {
             throw new ItemAvailableIsFalseException("Бронь невозможна, так как поле available = false");
@@ -50,8 +49,7 @@ public class BookingServiceImpl implements BookingService {
         if ((long) item.getOwnerId() == bookerID) {
             throw new BookerIsItemOwnerException("Попытка забронировать вещь владельцем");
         }
-        Booking booking = BookingMapper.toBooking(bookingDto, item);
-        booking.setBooker(userRepository.findById(bookerID).get());
+        Booking booking = BookingMapper.toBooking(bookingDto, item, userRepository.findById(bookerID).get());
         booking.setStatus(Status.WAITING);
         Booking bookingForSave = bookingRepository.save(booking);
         String itemName = itemRepository.findById(bookingForSave.getItem().getId()).get().getName();
@@ -60,7 +58,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingWithItemNameDto approveOrRejectBookingRequest(Long userID, Long bookingId, Boolean approved) {
+    public ItemInfoDto.BookingWithItemNameDto approveOrRejectBookingRequest(Long userID, Long bookingId, Boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).get();
         if (booking.getStatus().equals(Status.APPROVED)) {
             throw new BookingAlreadyApprovedException("Бронирование уже подтверждено");
@@ -78,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Optional<BookingWithItemNameDto> getBookingById(Long bookingId, Long userId) {
+    public Optional<ItemInfoDto.BookingWithItemNameDto> getBookingById(Long bookingId, Long userId) {
         Booking foundBooking = bookingRepository.findById(bookingId).get();
         if ((long) foundBooking.getBooker().getId() == userId || (long) foundBooking.getItem().getOwnerId() == userId) {
             return Optional.of(BookingMapper.toBookingDtoWithItemName(foundBooking, foundBooking.getItem().getName()));
@@ -88,11 +86,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingWithItemNameDto> getListOfBookingsByUserId(Long bookerId, String state) {
+    public List<ItemInfoDto.BookingWithItemNameDto> getListOfBookingsByUserId(Long bookerId, String state) {
         if (userRepository.findById(bookerId).isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        List<BookingWithItemNameDto> allBookings = new ArrayList<>();
+        List<ItemInfoDto.BookingWithItemNameDto> allBookings = new ArrayList<>();
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
         if (state.equals("ALL")) {
@@ -126,9 +124,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingWithItemNameDto> getListOfBookingsAllItemsByUserId(Long userId, String state) {
+    public List<ItemInfoDto.BookingWithItemNameDto> getListOfBookingsAllItemsByUserId(Long userId, String state) {
         User user = userRepository.findById(userId).get();
-        List<BookingWithItemNameDto> allBookings = new ArrayList<>();
+        List<ItemInfoDto.BookingWithItemNameDto> allBookings = new ArrayList<>();
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
         if (state.equals("ALL")) {

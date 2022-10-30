@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
-import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.Create;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -37,5 +39,50 @@ public class ItemInfoDto {
         private Long bookerId;
         private LocalDateTime start;
         private LocalDateTime end;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    public static class CommentDto {
+
+        private Long id;
+        private String text;
+        private String authorName;
+        private LocalDateTime created;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    public static class BookingDto {
+        private Long id;
+        private LocalDateTime start;
+        private LocalDateTime end;
+        private Long itemId;
+        private Long bookerId;
+        Status status;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    public static class BookingWithItemNameDto {
+        private Long id;
+        private LocalDateTime start;
+        private LocalDateTime end;
+        private Item item;
+        private User booker;
+        private Status status;
+        private String itemName;
     }
 }
