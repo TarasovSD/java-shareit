@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -87,93 +88,118 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingWithItemNameDto> getListOfBookingsByUserId(Long bookerId, String state) {
+    public List<BookingWithItemNameDto> getListOfBookingsByUserId(Long bookerId, String state, PageRequest pageRequest) {
         if (userRepository.findById(bookerId).isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
         List<BookingWithItemNameDto> allBookings = new ArrayList<>();
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
-        if (state.equals("ALL")) {
-            for (Booking booking : bookingRepository.findByBooker_IdOrderByStartDesc(bookerId)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else if (state.equals("CURRENT")) {
-            for (Booking booking : bookingRepository.getByBookerCurrent(bookerId, end, start)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else if (state.equals("FUTURE")) {
-            for (Booking booking : bookingRepository.getByBookerFuture(bookerId, start)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else if (state.equals("WAITING")) {
-            for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.WAITING)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else if (state.equals("REJECTED")) {
-            for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.REJECTED)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else if (state.equals("PAST")) {
-            for (Booking booking : bookingRepository.getLastBookingsByBooker(bookerId, end)) {
-                allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
-            }
-        } else {
-            throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
+        switch (state) {
+            case "ALL":
+                for (Booking booking : bookingRepository.findByBooker_IdOrderByStartDesc(bookerId, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            case "CURRENT":
+                for (Booking booking : bookingRepository.getByBookerCurrent(bookerId, end, start, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            case "FUTURE":
+                for (Booking booking : bookingRepository.getByBookerFuture(bookerId, start, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            case "WAITING":
+                for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.WAITING, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            case "REJECTED":
+                for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.REJECTED, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            case "PAST":
+                for (Booking booking : bookingRepository.getLastBookingsByBooker(bookerId, end, pageRequest)) {
+                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                }
+                break;
+            default:
+                throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
         }
         return allBookings;
     }
 
     @Override
-    public List<BookingWithItemNameDto> getListOfBookingsAllItemsByUserId(Long userId, String state) {
+    public List<BookingWithItemNameDto> getListOfBookingsAllItemsByUserId(Long userId, String state,
+                                                                          PageRequest pageRequest) {
         User user = userRepository.findById(userId).get();
         List<BookingWithItemNameDto> allBookings = new ArrayList<>();
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
-        if (state.equals("ALL")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.findByItem_IdOrderByStartDesc(item.getId())) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+        Integer from = 0;
+        Integer size = 15;
+        int page = from / size;
+        PageRequest pageRequestForItem = PageRequest.of(page, size);
+        switch (state) {
+            case "ALL": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.findByItem_IdOrderByStartDesc(item.getId(), pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else if (state.equals("CURRENT")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.getByItemIdCurrent(item.getId(), end, start)) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+            case "CURRENT": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.getByItemIdCurrent(item.getId(), end, start, pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else if (state.equals("FUTURE")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.getByItemIdFuture(item.getId(), start)) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+            case "FUTURE": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.getByItemIdFuture(item.getId(), start, pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else if (state.equals("WAITING")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.WAITING)) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+            case "WAITING": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.WAITING, pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else if (state.equals("REJECTED")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.REJECTED)) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+            case "REJECTED": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.REJECTED, pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else if (state.equals("PAST")) {
-            List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId);
-            for (Item item : allUsersItems) {
-                for (Booking booking : bookingRepository.getLastBookingsByItem(item.getId(), start)) {
-                    allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+            case "PAST": {
+                List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
+                for (Item item : allUsersItems) {
+                    for (Booking booking : bookingRepository.getLastBookingsByItem(item.getId(), start, pageRequest)) {
+                        allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
+                    }
                 }
+                break;
             }
-        } else {
-            throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
+            default:
+                throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
         }
         return allBookings;
     }

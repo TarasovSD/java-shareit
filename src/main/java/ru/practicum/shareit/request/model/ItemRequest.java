@@ -1,9 +1,10 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,19 +13,17 @@ import javax.validation.constraints.NotBlank;
 @ToString
 @EqualsAndHashCode
 @Entity
-@Table(name = "items")
-public class Item {
+@Table(name = "requests")
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @NotBlank
-    private String name;
-    @NotBlank
+    @Column(name = "description")
     private String description;
-    private Boolean available;
-    @Column(name = "owner_id")
-    private Long ownerId;
-    @Column(name = "request_id")
-    private Long requestId;
+    @Column(name = "requestor_id")
+    private Long requestorId;
+    @Column(name = "created")
+    private LocalDateTime created;
 }

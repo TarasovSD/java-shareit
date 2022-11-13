@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -110,8 +111,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> getItemsListByUserId(Long userId) {
-        List<Item> userItems = itemRepository.findAllByOwnerId(userId);
+    public List<ItemInfoDto> getItemsListByUserId(Long userId, PageRequest pageRequest) {
+        List<Item> userItems = itemRepository.findAllByOwnerId(userId, pageRequest);
         List<ItemInfoDto> userItemsDto = new ArrayList<>();
         LocalDateTime nowMoment = LocalDateTime.now();
         for (Item item : userItems) {
@@ -138,12 +139,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ShortItemDto> getItemsListBySearch(String text) {
+    public List<ShortItemDto> getItemsListBySearch(String text, PageRequest pageRequest) {
         List<ShortItemDto> foundItems = new ArrayList<>();
         if (text.isBlank()) {
             return foundItems;
         }
-        List<Item> foundItemsInRepository = itemRepository.findAll();
+        List<Item> foundItemsInRepository = itemRepository.getAll(pageRequest);
         for (Item item : foundItemsInRepository) {
             String searchText = text.toLowerCase();
             String nameToLowerCase = item.getName().toLowerCase();

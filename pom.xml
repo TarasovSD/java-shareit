@@ -87,6 +87,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
+						<argLine>@{argLine}</argLine>
 						<systemPropertyVariables>
 							<spring.profiles.active>test</spring.profiles.active>
 						</systemPropertyVariables>
@@ -194,7 +195,7 @@
 							</configuration>
 						</execution>
 						<execution>
-							<id>jacoco-report</id>
+							<id>jacoco-site</id>
 							<phase>test</phase>
 							<goals>
 								<goal>report</goal>

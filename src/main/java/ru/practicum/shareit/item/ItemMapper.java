@@ -17,7 +17,7 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 user.getId(),
-                itemDto.getRequest());
+                itemDto.getRequestId());
     }
 
     public static ItemDto toItemDto(Item item) {
@@ -25,7 +25,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest());
+                item.getRequestId());
     }
 
     public static ShortItemDto toShortItemDto(Item item) {
@@ -55,7 +55,7 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequest(),
+                item.getRequestId(),
                 lastBookingDto,
                 nextBookingDto,
                 listOfComments);

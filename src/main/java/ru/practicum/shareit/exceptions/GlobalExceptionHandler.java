@@ -44,6 +44,12 @@ public class GlobalExceptionHandler extends RuntimeException {
         return new ResponseEntity<>("Вещь не найдена", HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = RequestNotFoundException.class)
+    public ResponseEntity<String> handleRequestNotFoundException(final RequestNotFoundException e) {
+        log.info(e.getMessage());
+        return new ResponseEntity<>("Запрос не найден", HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = ItemAvailableIsNullException.class)
     public ResponseEntity<String> handleItemAvailableIsNullException(final ItemAvailableIsNullException e) {
         log.info(e.getMessage());
