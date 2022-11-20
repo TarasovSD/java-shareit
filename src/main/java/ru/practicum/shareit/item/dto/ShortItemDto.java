@@ -6,9 +6,7 @@ import ru.practicum.shareit.user.Create;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@Setter
 @AllArgsConstructor
-@ToString
 @EqualsAndHashCode
 public class ShortItemDto {
     private Long id;

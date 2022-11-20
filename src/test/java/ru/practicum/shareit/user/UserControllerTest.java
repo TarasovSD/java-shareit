@@ -139,5 +139,8 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+        verify(userService, times(1))
+                .removeUserById(user1.getId());
     }
 }

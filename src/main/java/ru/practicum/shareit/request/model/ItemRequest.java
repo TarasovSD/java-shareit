@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

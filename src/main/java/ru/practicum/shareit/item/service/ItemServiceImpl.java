@@ -47,9 +47,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto createItem(ItemDto itemDto, Long userID) {
-        User user = userRepository.findById(userID).get();
-        if (user != null) {
-            Item item = ItemMapper.toItem(itemDto, user);
+        Optional<User> userOptional = userRepository.findById(userID);
+        if (userOptional.isPresent()) {
+            Item item = ItemMapper.toItem(itemDto, userOptional.get());
             validateItem(item);
             return ItemMapper.toItemDto(itemRepository.save(item));
         } else {
@@ -60,23 +60,29 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userID) {
-        User user = userRepository.findById(userID).get();
-        Item item = ItemMapper.toItem(itemDto, user);
-        Item foundItem = itemRepository.findById(itemId).get();
-        validateItem(foundItem);
-        if (!Objects.equals(item.getOwnerId(), foundItem.getOwnerId())) {
+        Optional<User> userOptional = userRepository.findById(userID);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Пользователь не найден!");
+        }
+        Item item = ItemMapper.toItem(itemDto, userOptional.get());
+        Optional<Item> foundItemOptional = itemRepository.findById(itemId);
+        if (foundItemOptional.isEmpty()) {
+            throw new ItemNotFoundException("Вещь не найдена!");
+        }
+        validateItem(foundItemOptional.get());
+        if (!Objects.equals(item.getOwnerId(), foundItemOptional.get().getOwnerId())) {
             throw new ItemNotFoundException("Вещь не найдена!");
         }
         if (item.getName() != null) {
-            foundItem.setName(item.getName());
+            foundItemOptional.get().setName(item.getName());
         }
         if (item.getDescription() != null) {
-            foundItem.setDescription(item.getDescription());
+            foundItemOptional.get().setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
-            foundItem.setAvailable(item.getAvailable());
+            foundItemOptional.get().setAvailable(item.getAvailable());
         }
-        return ItemMapper.toItemDto(itemRepository.save(foundItem));
+        return ItemMapper.toItemDto(itemRepository.save(foundItemOptional.get()));
     }
 
     @Override
@@ -181,14 +187,10 @@ public class ItemServiceImpl implements ItemService {
             throw new CommentCreateException("Создание комментария невозможно, так как не найдены автор, вещь или бронирования");
         }
         Comment commentForSave = CommentMapper.toComment(commentDto, author, itemForComment, created);
-        commentRepository.save(commentForSave);
         return CommentMapper.toCommentDto(commentRepository.save(commentForSave));
     }
 
     private void validateItem(Item item) {
-        if (item == null) {
-            throw new ItemIsNullException("Вещь = null");
-        }
         if (item.getAvailable() == null) {
             throw new ItemAvailableIsNullException("Поле available = null");
         }

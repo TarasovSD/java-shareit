@@ -14,12 +14,6 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class GlobalExceptionHandler extends RuntimeException {
 
-    @ExceptionHandler(value = UserEmailAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserEmailAlreadyExistsException(final UserEmailAlreadyExistsException e) {
-        log.info(e.getMessage());
-        return new ResponseEntity<>("Пользователь с таким email уже есть в базе", HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(value = UserEmailIsNullException.class)
     public ResponseEntity<String> handleUserEmailIsNullException(final UserEmailIsNullException e) {
         log.info(e.getMessage());
@@ -32,22 +26,10 @@ public class GlobalExceptionHandler extends RuntimeException {
         return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = ItemIsNullException.class)
-    public ResponseEntity<String> handleItemIsNullException(final ItemIsNullException e) {
-        log.info(e.getMessage());
-        return new ResponseEntity<>("Вещь не найдена", HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(value = ItemNotFoundException.class)
     public ResponseEntity<String> handleItemNotFoundException(final ItemNotFoundException e) {
         log.info(e.getMessage());
         return new ResponseEntity<>("Вещь не найдена", HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(value = RequestNotFoundException.class)
-    public ResponseEntity<String> handleRequestNotFoundException(final RequestNotFoundException e) {
-        log.info(e.getMessage());
-        return new ResponseEntity<>("Запрос не найден", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = ItemAvailableIsNullException.class)

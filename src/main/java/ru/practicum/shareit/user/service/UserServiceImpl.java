@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.UserEmailIsNullException;
-import ru.practicum.shareit.exceptions.UserIsNullException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -49,8 +48,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> getUserById(Long id) {
-        User foundUser = userRepository.findById(id).get();
-        if (foundUser != null) {
+        if (userRepository.findById(id).isPresent()) {
+            User foundUser = userRepository.findById(id).get();
             UserDto foundUserDto = UserMapper.toUserDto(foundUser);
             return Optional.of(foundUserDto);
         } else {
@@ -62,28 +61,29 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Optional<UserDto> updateUser(UserDto userDto, Long id) {
         User user = UserMapper.toUser(userDto);
+        if (getUserById(id).isEmpty()) {
+            throw new UserNotFoundException("Пользователь не найден");
+        }
         User foundUser = UserMapper.toUser(getUserById(id).get());
         if (user.getName() != null) {
             foundUser.setName(user.getName());
         }
-        if (user.getEmail() != null && !user.getEmail().equals(foundUser.getEmail())) {
+        if (user.getEmail() != null) {
             foundUser.setEmail(user.getEmail());
         }
-        Optional<UserDto> updatedUser = Optional.of(UserMapper.toUserDto(userRepository.save(foundUser)));
-        updatedUser.orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
-        return updatedUser;
+        return Optional.of(UserMapper.toUserDto(userRepository.save(foundUser)));
     }
 
     @Override
     @Transactional
     public void removeUserById(Long id) {
+        if (userRepository.findById(id).isEmpty()) {
+            throw new UserNotFoundException("Пользователь не найден");
+        }
         userRepository.delete(userRepository.findById(id).get());
     }
 
     private void validateUser(User user) {
-        if (user == null) {
-            throw new UserIsNullException("Пользователь = null");
-        }
         if (user.getEmail() == null) {
             throw new UserEmailIsNullException("Email пользователя = null");
         }

@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptions.RequestNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoWithResponses;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.Create;
 
 import javax.validation.constraints.Positive;
@@ -25,16 +23,16 @@ public class ItemRequestController {
 
     final ItemRequestService requestService;
 
-    public ItemRequestController(ItemRequestServiceImpl requestService) {
+    public ItemRequestController(ItemRequestService requestService) {
         this.requestService = requestService;
     }
 
     @PostMapping()
     public ItemRequestDto createBooking(@RequestHeader("X-Sharer-User-Id") Long requestorID, @Validated({Create.class})
     @RequestBody ItemRequestDto itemRequestDto) {
-        ItemRequestDto createditemRequestDto = requestService.createRequest(itemRequestDto, requestorID);
+        ItemRequestDto createdItemRequestDto = requestService.createRequest(itemRequestDto, requestorID);
         log.info("Запрс вещи создан");
-        return createditemRequestDto;
+        return createdItemRequestDto;
     }
 
     @GetMapping()
@@ -58,7 +56,6 @@ public class ItemRequestController {
                                                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Выполнен запрос getRequestById по ID: " + requestId);
         Optional<ItemRequestDtoWithResponses> optionalRequest = requestService.getRequestById(requestId, userId);
-        optionalRequest.orElseThrow(() -> new RequestNotFoundException("Запрос не найден"));
         return optionalRequest;
     }
 

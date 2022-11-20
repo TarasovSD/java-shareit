@@ -10,12 +10,9 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
 @Entity
 @Table(name = "comments")
 @Getter
-@Setter
 public class Comment {
 
     @Id

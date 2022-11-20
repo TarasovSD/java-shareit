@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.dto.ShortItemDto;
@@ -46,9 +45,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public Optional<ItemInfoDto> getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Выполнен запрос getUserById по ID: " + itemId);
-        Optional<ItemInfoDto> optionalItem = itemService.getItemById(itemId, userId);
-        optionalItem.orElseThrow(() -> new ItemNotFoundException("Вещь не найдена"));
-        return optionalItem;
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping()
