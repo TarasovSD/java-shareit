@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingWithItemNameDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
@@ -95,39 +96,38 @@ public class BookingServiceImpl implements BookingService {
         List<BookingWithItemNameDto> allBookings = new ArrayList<>();
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.now();
-        switch (state) {
-            case "ALL":
+        State states = State.valueOf(state);
+        switch (states) {
+            case ALL:
                 for (Booking booking : bookingRepository.findByBooker_IdOrderByStartDesc(bookerId, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            case "CURRENT":
+            case CURRENT:
                 for (Booking booking : bookingRepository.getByBookerCurrent(bookerId, end, start, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            case "FUTURE":
+            case FUTURE:
                 for (Booking booking : bookingRepository.getByBookerFuture(bookerId, start, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            case "WAITING":
+            case WAITING:
                 for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.WAITING, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            case "REJECTED":
+            case REJECTED:
                 for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.REJECTED, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            case "PAST":
+            case PAST:
                 for (Booking booking : bookingRepository.getLastBookingsByBooker(bookerId, end, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
-            default:
-                throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
         }
         return allBookings;
     }
@@ -143,8 +143,9 @@ public class BookingServiceImpl implements BookingService {
         Integer size = 15;
         int page = from / size;
         PageRequest pageRequestForItem = PageRequest.of(page, size);
-        switch (state) {
-            case "ALL": {
+        State states = State.valueOf(state);
+        switch (states) {
+            case ALL: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.findByItem_IdOrderByStartDesc(item.getId(), pageRequest)) {
@@ -153,7 +154,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            case "CURRENT": {
+            case CURRENT: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.getByItemIdCurrent(item.getId(), end, start, pageRequest)) {
@@ -162,7 +163,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            case "FUTURE": {
+            case FUTURE: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.getByItemIdFuture(item.getId(), start, pageRequest)) {
@@ -171,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            case "WAITING": {
+            case WAITING: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.WAITING, pageRequest)) {
@@ -180,7 +181,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            case "REJECTED": {
+            case REJECTED: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.REJECTED, pageRequest)) {
@@ -189,7 +190,7 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            case "PAST": {
+            case PAST: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
                     for (Booking booking : bookingRepository.getLastBookingsByItem(item.getId(), start, pageRequest)) {
@@ -198,8 +199,6 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             }
-            default:
-                throw new InvalidValueOfStateParameterException("Unknown state: UNSUPPORTED_STATUS");
         }
         return allBookings;
     }

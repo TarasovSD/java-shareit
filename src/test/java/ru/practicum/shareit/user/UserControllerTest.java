@@ -41,13 +41,13 @@ class UserControllerTest {
     private User user1;
 
     private User updatedUser1;
-    UserDto userDto1;
+    private UserDto userDto1;
 
-    UserDto updatedUserDto1;
+    private UserDto updatedUserDto1;
 
     private User user2;
 
-    UserDto userDto2;
+    private UserDto userDto2;
 
     @Captor
     ArgumentCaptor<UserDto> captor;

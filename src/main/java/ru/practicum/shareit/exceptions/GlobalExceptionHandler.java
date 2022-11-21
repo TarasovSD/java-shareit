@@ -32,12 +32,6 @@ public class GlobalExceptionHandler extends RuntimeException {
         return new ResponseEntity<>("Вещь не найдена", HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = ItemAvailableIsNullException.class)
-    public ResponseEntity<String> handleItemAvailableIsNullException(final ItemAvailableIsNullException e) {
-        log.info(e.getMessage());
-        return new ResponseEntity<>("Поле available = null", HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = ItemAvailableIsFalseException.class)
     public ResponseEntity<String> handleItemAvailableIsFalseException(final ItemAvailableIsFalseException e) {
         log.info(e.getMessage());
@@ -48,12 +42,6 @@ public class GlobalExceptionHandler extends RuntimeException {
     public ResponseEntity<String> handleEndBeforeStartException(final EndBeforeStartException e) {
         log.info(e.getMessage());
         return new ResponseEntity<>("Значение поля End не может быть раньше значения поля Start", HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = InvalidValueOfStateParameterException.class)
-    public ResponseEntity<ErrorDto> handleInvalidValueOfStateParameterException(final InvalidValueOfStateParameterException e) {
-        log.info(e.getMessage());
-        return new ResponseEntity<>(new ErrorDto("Unknown state: UNSUPPORTED_STATUS"), HttpStatus.BAD_REQUEST);
     }
 
     @Getter
@@ -107,5 +95,11 @@ public class GlobalExceptionHandler extends RuntimeException {
     public ResponseEntity<String> handleNoSuchElementException(final NoSuchElementException e) {
         log.info(e.getMessage());
         return new ResponseEntity<>("Объект отсутствует в БД", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ErrorDto> handleIllegalArgumentException(final IllegalArgumentException e) {
+        log.info(e.getMessage());
+        return new ResponseEntity<>(new ErrorDto("Unknown state: UNSUPPORTED_STATUS"), HttpStatus.BAD_REQUEST);
     }
 }

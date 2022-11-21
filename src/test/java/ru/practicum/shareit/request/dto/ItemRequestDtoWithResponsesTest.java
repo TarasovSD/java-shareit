@@ -26,7 +26,7 @@ class ItemRequestDtoWithResponsesTest {
     void testSerialize() throws Exception {
         LocalDateTime created = LocalDateTime.of(2020, 01, 01, 0, 0, 0);
         ItemRequestDtoWithResponses itemRequestDto = new ItemRequestDtoWithResponses(1L, "item request description",
-                created, List.of(new ItemDto(1L, "item", "item description", true, 1L)));
+                created, List.of(new ItemRequestDtoWithResponses.ItemDtoForRequest(1L, "item", "item description", true, 1L)));
 
         JsonContent<ItemRequestDtoWithResponses> result = json.write(itemRequestDto);
 

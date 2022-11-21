@@ -28,10 +28,10 @@ public class ItemRequestController {
     }
 
     @PostMapping()
-    public ItemRequestDto createBooking(@RequestHeader("X-Sharer-User-Id") Long requestorID, @Validated({Create.class})
-    @RequestBody ItemRequestDto itemRequestDto) {
+    public ItemRequestDto createBooking(@RequestHeader("X-Sharer-User-Id") Long requestorID,
+                                        @Validated({Create.class}) @RequestBody ItemRequestDto itemRequestDto) {
         ItemRequestDto createdItemRequestDto = requestService.createRequest(itemRequestDto, requestorID);
-        log.info("Запрс вещи создан");
+        log.info("Запрос вещи создан");
         return createdItemRequestDto;
     }
 
@@ -52,11 +52,11 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public Optional<ItemRequestDtoWithResponses> getRequestById(@PathVariable Long requestId,
+    public ItemRequestDtoWithResponses getRequestById(@PathVariable Long requestId,
                                                                 @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Выполнен запрос getRequestById по ID: " + requestId);
         Optional<ItemRequestDtoWithResponses> optionalRequest = requestService.getRequestById(requestId, userId);
-        return optionalRequest;
+        return optionalRequest.get();
     }
 
 }

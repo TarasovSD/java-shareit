@@ -237,12 +237,6 @@ class BookingServiceTest {
 
         verify(bookingRepository, times(1))
                 .getLastBookingsByBooker(any(), any(), any());
-
-        assertThrows(InvalidValueOfStateParameterException.class, () -> bookingService.getListOfBookingsByUserId(user1.getId(),
-                "UNEXPECTED", PageRequest.of(0, 15)));
-    }
-
-    private void assrtThrow() {
     }
 
     @Test
@@ -322,9 +316,5 @@ class BookingServiceTest {
 
         verify(bookingRepository, times(1))
                 .getLastBookingsByItem(any(), any(), any());
-
-        assertThrows(InvalidValueOfStateParameterException.class, () ->
-                bookingService.getListOfBookingsAllItemsByUserId(user1.getId(), "UNEXPECTED",
-                        PageRequest.of(0, 15)));
     }
 }

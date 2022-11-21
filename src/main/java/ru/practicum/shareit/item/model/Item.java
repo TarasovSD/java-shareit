@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -22,6 +23,7 @@ public class Item {
     private String name;
     @NotBlank
     private String description;
+    @NotNull
     private Boolean available;
     @Column(name = "owner_id")
     private Long ownerId;

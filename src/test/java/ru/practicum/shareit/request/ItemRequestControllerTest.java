@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoWithResponses;
@@ -63,7 +62,7 @@ class ItemRequestControllerTest {
         LocalDateTime created = LocalDateTime.of(2022, 11, 14, 23, 24, 30);
         request1 = new ItemRequest(1L, "request description", 1L, created);
         Item item1 = new Item(1L, "item", "item description", true, 1L, request1.getId());
-        ItemDto itemDto1 = ItemMapper.toItemDto(item1);
+        ItemRequestDtoWithResponses.ItemDtoForRequest itemDto1 = ItemMapper.toItemDtoForRequest(item1);
         itemRequestDto1 = ItemRequestMapper.toItemRequestDto(request1);
         itemRequestDtoWithResponses1 = ItemRequestMapper.toItemRequestDtoWithResponses(request1, List.of(itemDto1));
 

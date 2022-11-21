@@ -50,7 +50,6 @@ public class ItemServiceImpl implements ItemService {
         Optional<User> userOptional = userRepository.findById(userID);
         if (userOptional.isPresent()) {
             Item item = ItemMapper.toItem(itemDto, userOptional.get());
-            validateItem(item);
             return ItemMapper.toItemDto(itemRepository.save(item));
         } else {
             throw new UserNotFoundException("Невозможно создать вещь, так как owner не найден!");
@@ -69,7 +68,6 @@ public class ItemServiceImpl implements ItemService {
         if (foundItemOptional.isEmpty()) {
             throw new ItemNotFoundException("Вещь не найдена!");
         }
-        validateItem(foundItemOptional.get());
         if (!Objects.equals(item.getOwnerId(), foundItemOptional.get().getOwnerId())) {
             throw new ItemNotFoundException("Вещь не найдена!");
         }
@@ -188,11 +186,5 @@ public class ItemServiceImpl implements ItemService {
         }
         Comment commentForSave = CommentMapper.toComment(commentDto, author, itemForComment, created);
         return CommentMapper.toCommentDto(commentRepository.save(commentForSave));
-    }
-
-    private void validateItem(Item item) {
-        if (item.getAvailable() == null) {
-            throw new ItemAvailableIsNullException("Поле available = null");
-        }
     }
 }

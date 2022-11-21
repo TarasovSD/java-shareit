@@ -10,7 +10,6 @@ import ru.practicum.shareit.comment.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.CommentCreateException;
-import ru.practicum.shareit.exceptions.ItemAvailableIsNullException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -106,8 +105,6 @@ class ItemServiceTest {
 
         assertThrows(UserNotFoundException.class, () -> itemService.createItem(new ItemDto(item1.getId(),
                 item1.getName(), item1.getDescription(), item1.getAvailable(), item1.getRequestId()), 12L));
-        assertThrows(ItemAvailableIsNullException.class, () -> itemService.createItem(new ItemDto(item1.getId(),
-                item1.getName(), item1.getDescription(), null, item1.getRequestId()), 1L));
     }
 
     @Test

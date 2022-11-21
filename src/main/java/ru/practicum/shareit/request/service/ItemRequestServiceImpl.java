@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -53,8 +52,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User user = userRepository.findById(userid).get();
         List<ItemRequestDtoWithResponses> allOwnRequests = new ArrayList<>();
         for (ItemRequest itemRequest : itemRequestRepository.getByRequestorId(userid)) {
-            List<ItemDto> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
-                    .map(ItemMapper::toItemDto)
+            List<ItemRequestDtoWithResponses.ItemDtoForRequest> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
+                    .map(ItemMapper::toItemDtoForRequest)
                     .collect(Collectors.toList());
             allOwnRequests.add(ItemRequestMapper.toItemRequestDtoWithResponses(itemRequest, listOfResponses));
         }
@@ -68,8 +67,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
         List<ItemRequestDtoWithResponses> listOfRequestsOtherUsers = new ArrayList<>();
         for (ItemRequest itemRequest : listOfRequests) {
-            List<ItemDto> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
-                    .map(ItemMapper::toItemDto)
+            List<ItemRequestDtoWithResponses.ItemDtoForRequest> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
+                    .map(ItemMapper::toItemDtoForRequest)
                     .collect(Collectors.toList());
             if (!Objects.equals(itemRequest.getRequestorId(), userId)) {
                 listOfRequestsOtherUsers.add(ItemRequestMapper.toItemRequestDtoWithResponses(itemRequest, listOfResponses));
@@ -82,8 +81,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public Optional<ItemRequestDtoWithResponses> getRequestById(Long requestId, Long userId) {
         User user = userRepository.findById(userId).get();
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
-        List<ItemDto> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
-                .map(ItemMapper::toItemDto)
+        List<ItemRequestDtoWithResponses.ItemDtoForRequest> listOfResponses = itemRepository.findAllByRequestId(itemRequest.getId()).stream()
+                .map(ItemMapper::toItemDtoForRequest)
                 .collect(Collectors.toList());
         ItemRequestDtoWithResponses itemRequestDtoWithResponses =
                 ItemRequestMapper.toItemRequestDtoWithResponses(itemRequest, listOfResponses);
