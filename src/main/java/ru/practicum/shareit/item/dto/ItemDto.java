@@ -18,5 +18,5 @@ public class ItemDto {
     @NotBlank(groups = {Create.class})
     private String description;
     private Boolean available;
-    private Long request;
+    private Long requestId;
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
@@ -46,10 +47,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto createItem(ItemDto itemDto, Long userID) {
-        User user = userRepository.findById(userID).get();
-        if (user != null) {
-            Item item = ItemMapper.toItem(itemDto, user);
-            validateItem(item);
+        Optional<User> userOptional = userRepository.findById(userID);
+        if (userOptional.isPresent()) {
+            Item item = ItemMapper.toItem(itemDto, userOptional.get());
             return ItemMapper.toItemDto(itemRepository.save(item));
         } else {
             throw new UserNotFoundException("Невозможно создать вещь, так как owner не найден!");
@@ -59,23 +59,28 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userID) {
-        User user = userRepository.findById(userID).get();
-        Item item = ItemMapper.toItem(itemDto, user);
-        Item foundItem = itemRepository.findById(itemId).get();
-        validateItem(foundItem);
-        if (!Objects.equals(item.getOwnerId(), foundItem.getOwnerId())) {
+        Optional<User> userOptional = userRepository.findById(userID);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Пользователь не найден!");
+        }
+        Item item = ItemMapper.toItem(itemDto, userOptional.get());
+        Optional<Item> foundItemOptional = itemRepository.findById(itemId);
+        if (foundItemOptional.isEmpty()) {
+            throw new ItemNotFoundException("Вещь не найдена!");
+        }
+        if (!Objects.equals(item.getOwnerId(), foundItemOptional.get().getOwnerId())) {
             throw new ItemNotFoundException("Вещь не найдена!");
         }
         if (item.getName() != null) {
-            foundItem.setName(item.getName());
+            foundItemOptional.get().setName(item.getName());
         }
         if (item.getDescription() != null) {
-            foundItem.setDescription(item.getDescription());
+            foundItemOptional.get().setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
-            foundItem.setAvailable(item.getAvailable());
+            foundItemOptional.get().setAvailable(item.getAvailable());
         }
-        return ItemMapper.toItemDto(itemRepository.save(foundItem));
+        return ItemMapper.toItemDto(itemRepository.save(foundItemOptional.get()));
     }
 
     @Override
@@ -110,8 +115,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemInfoDto> getItemsListByUserId(Long userId) {
-        List<Item> userItems = itemRepository.findAllByOwnerId(userId);
+    public List<ItemInfoDto> getItemsListByUserId(Long userId, PageRequest pageRequest) {
+        List<Item> userItems = itemRepository.findAllByOwnerId(userId, pageRequest);
         List<ItemInfoDto> userItemsDto = new ArrayList<>();
         LocalDateTime nowMoment = LocalDateTime.now();
         for (Item item : userItems) {
@@ -138,12 +143,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ShortItemDto> getItemsListBySearch(String text) {
+    public List<ShortItemDto> getItemsListBySearch(String text, PageRequest pageRequest) {
         List<ShortItemDto> foundItems = new ArrayList<>();
         if (text.isBlank()) {
             return foundItems;
         }
-        List<Item> foundItemsInRepository = itemRepository.findAll();
+        List<Item> foundItemsInRepository = itemRepository.getAll(pageRequest);
         for (Item item : foundItemsInRepository) {
             String searchText = text.toLowerCase();
             String nameToLowerCase = item.getName().toLowerCase();
@@ -180,16 +185,6 @@ public class ItemServiceImpl implements ItemService {
             throw new CommentCreateException("Создание комментария невозможно, так как не найдены автор, вещь или бронирования");
         }
         Comment commentForSave = CommentMapper.toComment(commentDto, author, itemForComment, created);
-        commentRepository.save(commentForSave);
         return CommentMapper.toCommentDto(commentRepository.save(commentForSave));
-    }
-
-    private void validateItem(Item item) {
-        if (item == null) {
-            throw new ItemIsNullException("Вещь = null");
-        }
-        if (item.getAvailable() == null) {
-            throw new ItemAvailableIsNullException("Поле available = null");
-        }
     }
 }

@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.dto.ShortItemDto;
@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.Create;
 import ru.practicum.shareit.user.Update;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,21 +45,27 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public Optional<ItemInfoDto> getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Выполнен запрос getUserById по ID: " + itemId);
-        Optional<ItemInfoDto> optionalItem = itemService.getItemById(itemId, userId);
-        optionalItem.orElseThrow(() -> new ItemNotFoundException("Вещь не найдена"));
-        return optionalItem;
+        return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping()
-    public List<ItemInfoDto> getItemsListByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemInfoDto> getItemsListByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                  @Positive @RequestParam(name = "size", defaultValue = "15") Integer size) {
         log.info("Выполнен запрос списка всех вещей пользователя с ID: " + userId);
-        return itemService.getItemsListByUserId(userId);
+        int page = from / size;
+        final PageRequest pageRequest = PageRequest.of(page, size);
+        return itemService.getItemsListByUserId(userId, pageRequest);
     }
 
     @GetMapping("/search")
-    public List<ShortItemDto> getItemsListBySearch(@RequestParam String text) {
+    public List<ShortItemDto> getItemsListBySearch(@RequestParam String text,
+                                                   @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                   @Positive @RequestParam(name = "size", defaultValue = "15") Integer size) {
         log.info("Выполнен поиск вещей по запросу: " + text);
-        return itemService.getItemsListBySearch(text);
+        int page = from / size;
+        final PageRequest pageRequest = PageRequest.of(page, size);
+        return itemService.getItemsListBySearch(text, pageRequest);
     }
 
     @PostMapping("/{itemId}/comment")
