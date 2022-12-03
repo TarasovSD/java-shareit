@@ -26,8 +26,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 //            nativeQuery = true)
 //    List<Booking> getByItemIdAndStatus(Long bookerId, Status status, PageRequest pageRequest);
 
-    @Query(value = "select * from bookings as b left join users as u left join items as i where b.booker_id = ?1 and b.status = ?2",
-            nativeQuery = true)
+//    @Query(value = "select * from bookings as b left join users as u left join items as i where b.booker_id = ?1 and b.status = ?2",
+//            nativeQuery = true)
     List<Booking> findBookingsByBooker_IdAndAndStatusOrderByStartDesc(Long bookerId, Status status, PageRequest pageRequest);
 
     List<Booking> findByItem_IdOrderByStartDesc(Long id, PageRequest pageRequest);
