@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.annotations;
+package ru.practicum.shareit.annotations;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;

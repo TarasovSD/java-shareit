@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.Create;
 import ru.practicum.shareit.Update;
-import ru.practicum.shareit.booking.annotations.StartBeforeEnd;
+import ru.practicum.shareit.annotations.StartBeforeEnd;
 
 @Getter
 @NoArgsConstructor

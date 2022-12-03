@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.annotations;
+package ru.practicum.shareit.annotations;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StartBeforeEnd {
-    String name() default "StartBeforeEnd annotation";
+    String message() default "StartBeforeEnd annotation";
 
     Class<?>[] groups() default {};
 
