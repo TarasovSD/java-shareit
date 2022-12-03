@@ -16,9 +16,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class ItemInfoDto {
     private Long id;
-    @NotBlank(groups = {Create.class})
     private String name;
-    @NotBlank(groups = {Create.class})
     private String description;
     private Boolean available;
     private Long request;

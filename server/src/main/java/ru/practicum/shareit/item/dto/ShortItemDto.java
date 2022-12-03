@@ -10,9 +10,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode
 public class ShortItemDto {
     private Long id;
-    @NotBlank(groups = {Create.class})
     private String name;
-    @NotBlank(groups = {Create.class})
     private String description;
     private Boolean available;
 }
