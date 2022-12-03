@@ -39,6 +39,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional
     public ItemRequestDto createRequest(ItemRequestDto itemRequestDto, Long requestorID) {
         User user = userRepository.findById(requestorID).get();
         LocalDateTime created = LocalDateTime.now();

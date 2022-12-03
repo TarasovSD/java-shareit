@@ -21,13 +21,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b where b.booker.id = :bookerId and b.start > :start order by b.start desc")
     List<Booking> getByBookerFuture(Long bookerId, LocalDateTime start, PageRequest pageRequest);
 
-//    @Query("select b from Booking b where b.booker.id = :bookerId and b.status = :status order by b.start desc")
-//    @Query(value = "select * from bookings as b where b.booker_id = ?1 and b.status = ?2",
-//            nativeQuery = true)
-//    List<Booking> getByItemIdAndStatus(Long bookerId, Status status, PageRequest pageRequest);
-
-//    @Query(value = "select * from bookings as b left join users as u left join items as i where b.booker_id = ?1 and b.status = ?2",
-//            nativeQuery = true)
     List<Booking> findBookingsByBooker_IdAndAndStatusOrderByStartDesc(Long bookerId, Status status, PageRequest pageRequest);
 
     List<Booking> findByItem_IdOrderByStartDesc(Long id, PageRequest pageRequest);
@@ -37,9 +30,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("select b from Booking b where b.item.id = :id and b.start > :start order by b.start desc")
     List<Booking> getByItemIdFuture(Long id, LocalDateTime start, PageRequest pageRequest);
-
-//    @Query("select b from Booking b where b.item.id = :id and b.status = :status order by b.start desc")
-//    List<Booking> getByItemIdEndStatus(Long id, Status status, PageRequest pageRequest);
 
     List<Booking> findBookingsByItem_IdAndAndStatusOrderByStartDesc(Long id, Status status, PageRequest pageRequest);
 
