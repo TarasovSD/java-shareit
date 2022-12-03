@@ -177,9 +177,9 @@ class BookingServiceTest {
                 .thenReturn(List.of(booking1));
         when(bookingRepository.getByBookerFuture(any(), any(), any()))
                 .thenReturn(List.of(booking1));
-        when(bookingRepository.getByItemIdAndStatus(user1.getId(), Status.WAITING, PageRequest.of(0, 15)))
+        when(bookingRepository.findBookingsByBooker_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.WAITING, PageRequest.of(0, 15)))
                 .thenReturn(List.of(booking1));
-        when(bookingRepository.getByItemIdAndStatus(user1.getId(), Status.REJECTED, PageRequest.of(0, 15)))
+        when(bookingRepository.findBookingsByBooker_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.REJECTED, PageRequest.of(0, 15)))
                 .thenReturn(List.of(booking1));
         when(bookingRepository.getLastBookingsByBooker(any(), any(), any()))
                 .thenReturn(List.of(booking1));
@@ -218,7 +218,7 @@ class BookingServiceTest {
         assertEquals(bookingWithItemNameDto1, bookingWithItemNameDtoListWaiting.get(0));
 
         verify(bookingRepository, times(1))
-                .getByItemIdAndStatus(user1.getId(), Status.WAITING, PageRequest.of(0, 15));
+                .findBookingsByBooker_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.WAITING, PageRequest.of(0, 15));
 
         List<BookingWithItemNameDto> bookingWithItemNameDtoListRejected =
                 bookingService.getListOfBookingsByUserId(user1.getId(), "REJECTED", PageRequest.of(0, 15));
@@ -227,7 +227,7 @@ class BookingServiceTest {
         assertEquals(bookingWithItemNameDto1, bookingWithItemNameDtoListRejected.get(0));
 
         verify(bookingRepository, times(1))
-                .getByItemIdAndStatus(user1.getId(), Status.REJECTED, PageRequest.of(0, 15));
+                .findBookingsByBooker_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.REJECTED, PageRequest.of(0, 15));
 
         List<BookingWithItemNameDto> bookingWithItemNameDtoListPast =
                 bookingService.getListOfBookingsByUserId(user1.getId(), "PAST", PageRequest.of(0, 15));
@@ -249,9 +249,9 @@ class BookingServiceTest {
                 .thenReturn(List.of(booking1));
         when(bookingRepository.getByItemIdFuture(any(), any(), any()))
                 .thenReturn(List.of(booking1));
-        when(bookingRepository.getByItemIdEndStatus(user1.getId(), Status.WAITING, PageRequest.of(0, 15)))
+        when(bookingRepository.findBookingsByItem_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.WAITING, PageRequest.of(0, 15)))
                 .thenReturn(List.of(booking1));
-        when(bookingRepository.getByItemIdEndStatus(user1.getId(), Status.REJECTED, PageRequest.of(0, 15)))
+        when(bookingRepository.findBookingsByItem_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.REJECTED, PageRequest.of(0, 15)))
                 .thenReturn(List.of(booking1));
         when(bookingRepository.getLastBookingsByItem(any(), any(), any()))
                 .thenReturn(List.of(booking1));
@@ -295,7 +295,7 @@ class BookingServiceTest {
         assertEquals(bookingWithItemNameDto1, bookingWithItemNameDtoListWaiting.get(0));
 
         verify(bookingRepository, times(1))
-                .getByItemIdEndStatus(user1.getId(), Status.WAITING, PageRequest.of(0, 15));
+                .findBookingsByItem_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.WAITING, PageRequest.of(0, 15));
 
         List<BookingWithItemNameDto> bookingWithItemNameDtoListRejected
                 = bookingService.getListOfBookingsAllItemsByUserId(user1.getId(),
@@ -305,7 +305,7 @@ class BookingServiceTest {
         assertEquals(bookingWithItemNameDto1, bookingWithItemNameDtoListRejected.get(0));
 
         verify(bookingRepository, times(1))
-                .getByItemIdEndStatus(user1.getId(), Status.REJECTED, PageRequest.of(0, 15));
+                .findBookingsByItem_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.REJECTED, PageRequest.of(0, 15));
 
         List<BookingWithItemNameDto> bookingWithItemNameDtoListPast
                 = bookingService.getListOfBookingsAllItemsByUserId(user1.getId(),

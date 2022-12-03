@@ -90,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingWithItemNameDto> getListOfBookingsByUserId(Long bookerId, String state, PageRequest pageRequest) {
+        User user = userRepository.findById(bookerId).get();
         if (userRepository.findById(bookerId).isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
@@ -114,12 +115,12 @@ public class BookingServiceImpl implements BookingService {
                 }
                 break;
             case WAITING:
-                for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.WAITING, pageRequest)) {
+                for (Booking booking : bookingRepository.findBookingsByBooker_IdAndAndStatusOrderByStartDesc(bookerId, Status.WAITING, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
             case REJECTED:
-                for (Booking booking : bookingRepository.getByItemIdAndStatus(bookerId, Status.REJECTED, pageRequest)) {
+                for (Booking booking : bookingRepository.findBookingsByBooker_IdAndAndStatusOrderByStartDesc(bookerId, Status.REJECTED, pageRequest)) {
                     allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                 }
                 break;
@@ -175,7 +176,7 @@ public class BookingServiceImpl implements BookingService {
             case WAITING: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
-                    for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.WAITING, pageRequest)) {
+                    for (Booking booking : bookingRepository.findBookingsByItem_IdAndAndStatusOrderByStartDesc(item.getId(), Status.WAITING, pageRequest)) {
                         allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                     }
                 }
@@ -184,7 +185,7 @@ public class BookingServiceImpl implements BookingService {
             case REJECTED: {
                 List<Item> allUsersItems = itemRepository.findAllByOwnerId(userId, pageRequestForItem);
                 for (Item item : allUsersItems) {
-                    for (Booking booking : bookingRepository.getByItemIdEndStatus(item.getId(), Status.REJECTED, pageRequest)) {
+                    for (Booking booking : bookingRepository.findBookingsByItem_IdAndAndStatusOrderByStartDesc(item.getId(), Status.REJECTED, pageRequest)) {
                         allBookings.add(BookingMapper.toBookingDtoWithItemName(booking, booking.getItem().getName()));
                     }
                 }

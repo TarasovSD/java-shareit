@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
+    @Query(value = "select * from items where owner_id = ?1 order by id", nativeQuery = true)
     List<Item> findAllByOwnerId(Long ownerId, PageRequest pageRequest);
 
     List<Item> findAllByRequestId(Long requestId);

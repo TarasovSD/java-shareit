@@ -92,7 +92,7 @@ class BookingRepositoryTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void getByItemIdAndStatus() {
-        final List<Booking> bookingList = bookingRepository.getByItemIdAndStatus(user1.getId(), Status.WAITING,
+        final List<Booking> bookingList = bookingRepository.findBookingsByBooker_IdAndAndStatusOrderByStartDesc(user1.getId(), Status.WAITING,
                 PageRequest.of(0, 15));
 
         assertNotNull(bookingList.get(0));
@@ -141,7 +141,7 @@ class BookingRepositoryTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void getByItemIdEndStatus() {
-        final List<Booking> bookingList = bookingRepository.getByItemIdEndStatus(item1.getId(), Status.WAITING, PageRequest.of(0, 15));
+        final List<Booking> bookingList = bookingRepository.findBookingsByItem_IdAndAndStatusOrderByStartDesc(item1.getId(), Status.WAITING, PageRequest.of(0, 15));
 
         assertNotNull(bookingList.get(0));
         assertEquals(1, bookingList.size());
