@@ -5,9 +5,9 @@
 
 Основной технологический стек:
 
-Java 11;
-Spring Boot;
-Hibernate ORM;
-PostgreSQL;
-Apache Maven;
-Docker.
+- Java 11;
+- Spring Boot;
+- Hibernate ORM;
+- PostgreSQL;
+- Apache Maven;
+- Docker.
